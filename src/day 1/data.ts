@@ -1,4 +1,8 @@
-const data = `R1
+const data = {
+  dialStart: 50,
+  dialMax: 99,
+  dialMin: 0,
+  input: `R1
 L31
 R5
 L11
@@ -4158,6 +4162,7 @@ R37
 R19
 R37
 L48
-L27`
+L27`,
+};
 
-export default data
+export default data;
