@@ -1,4 +1,4 @@
-import data from './rawdata.js'
+import data from './rawdata.ts'
 
 const dialStart = 50
 const dialMax = 99
@@ -85,14 +85,12 @@ if (value < dialMin){
 }
 if (value > dialMax){
     value = value-100
-    if(value!=0){
-    timesZero++}
+    return timesZero++
 }
 
 if (value === 0) {
-    timesZero++
+    return timesZero++
 }
 
-
 })
-console.log(timesZero)
+console.log(timesZero) // sollution: 5933

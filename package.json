@@ -1,5 +1,23 @@
 {
+  "name": "advent-of-code-2025",
+  "version": "1.0.0",
+  "description": "",
+  "homepage": "https://github.com/kevin-korenhof/Advent-of-Code-2025#readme",
+  "bugs": {
+    "url": "https://github.com/kevin-korenhof/Advent-of-Code-2025/issues"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/kevin-korenhof/Advent-of-Code-2025.git"
+  },
+  "license": "ISC",
+  "author": "",
+  "type": "module",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
   "dependencies": {
     "typescript": "^5.9.3"
-  }
+  },
+  "devDependencies": {}
 }
