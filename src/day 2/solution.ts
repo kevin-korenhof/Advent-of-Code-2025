@@ -1,16 +1,4 @@
-/**
- * String of data.
- * Separated by ,
- * Range of ID's, separated by -
- * Look for invalid ID's within the given range.
- * Wrong ranges contain repeat of digits. (first half same as second half)
- * @example: 55 (twice 5)
- * @example: 6464 (twice 64)
- * 
- */
-
-import { ListFormat } from "typescript";
-import { rawData } from "./data.ts";
+import { rawData, testData } from "./data.ts";
 
 type Data ={
     startValue: number,
@@ -28,30 +16,74 @@ function parseData(data:string):Data[] {
     return splitData
 }
 
+function splitNumber(input:number, maxLength:number):number[] {
+    let numbers: number[] = []
+    const nmrLength = input.toString().length
+    
+    if(nmrLength % maxLength == 0) {
+        for(let i = 0; i<nmrLength;){
+            const endIndex = i + maxLength
+            numbers.push(Number(input.toString().substring(i,endIndex)))
+            i = endIndex
+        }
+    }
+    return numbers
+}
+
+function assertEqualNumbers(numbers: number[]): boolean {
+   return numbers.every(val => val == numbers[0])
+}
+
 const parsedData: Data[] = parseData(rawData)
 
-let addedValues = 0
+let result = 0
+
+// part 1:
+// parsedData.forEach(({startValue, endValue}) => {
+//     for(let i=startValue; i<=endValue; i++){
+//         const valueLength = i.toString().length
+
+//         // Numbers with an odd amount of digits are always good, so only even will be processed
+//         if(valueLength % 2 == 0){    
+//         const firstHalf = i.toString().slice(0, valueLength/2)
+//         const secondHalf = i.toString().slice(valueLength/2, valueLength)
+
+//         if(firstHalf == secondHalf){
+//             addedValues = addedValues + i
+//             console.log(addedValues)
+//         }
+//         }
+//     }
+// })
+
+// part 2:
 
 parsedData.forEach(({startValue, endValue}) => {
     for(let i=startValue; i<=endValue; i++){
+        let addResult = 0
         const valueLength = i.toString().length
+        const halfLength = valueLength/2
 
-        // Numbers with an odd amount of digits are always good, so only even will be processed
-        if(valueLength % 2 == 0){
-            
-        const firstHalf = i.toString().slice(0, valueLength/2)
-        const secondHalf = i.toString().slice(valueLength/2, valueLength)
+        for(let j=1; j<=halfLength; j++){
+            if((valueLength % j) == 0){
+                const splitted = splitNumber(i,j)
 
-        if(firstHalf == secondHalf){
-            addedValues = addedValues + i
-            console.log(addedValues)
+                if(assertEqualNumbers(splitted)){
+                    addResult = i
+                }
+            }
+        
         }
-        }
-
-
+        result = result + addResult
     }
 })
+
+console.log(result)
+
 
 
 
 // part 1 answer: 28844599675 DONE!
+
+
+// Number(input.toString().substring(0,1))
