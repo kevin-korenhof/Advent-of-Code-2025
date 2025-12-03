@@ -14,7 +14,7 @@ function getHighestJoltage(
   let numberIndex = startIndex;
   for (
     let i = startIndex + 1;
-    i < bankLength - nmrOfBatteries + batteryNumber + 1;
+    i <= bankLength - nmrOfBatteries + batteryNumber;
     i++
   ) {
     const nextNumber = Number(bank.at(i));
@@ -32,7 +32,6 @@ function getHighestJoltage(
 const banks = rawData.split("\n");
 
 banks.forEach((bank) => {
-  console.log("bank: " + bank);
   let batteryIndexes: number[] = [];
   let index = 0;
 
