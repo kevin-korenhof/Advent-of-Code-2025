@@ -4,28 +4,28 @@ const nmrOfBatteries = 12;
 
 let answer = 0;
 
-function getHighestJoltage(
+function getHighestJoltageBatteryIndex(
   bank: string,
   startIndex: number = 0,
   batteryNumber: number
 ) {
   const bankLength = bank.length;
-  let number = Number(bank.at(startIndex));
-  let numberIndex = startIndex;
+  let joltage = 0;
+  let batteryIndex = startIndex;
   for (
-    let i = startIndex + 1;
+    let i = startIndex;
     i <= bankLength - nmrOfBatteries + batteryNumber;
     i++
   ) {
     const nextNumber = Number(bank.at(i));
 
-    if (nextNumber > number) {
-      numberIndex = i;
+    if (nextNumber > joltage) {
+      batteryIndex = i;
 
-      number = nextNumber;
+      joltage = nextNumber;
     }
   }
-  return numberIndex;
+  return batteryIndex;
 }
 
 // Separate data into banks.
@@ -33,14 +33,14 @@ const banks = rawData.split("\n");
 
 banks.forEach((bank) => {
   let batteryIndexes: number[] = [];
-  let index = 0;
+  let batteryIndex = 0;
 
   // get indexes
   for (let i = 0; i < nmrOfBatteries; i++) {
-    index = getHighestJoltage(bank, index, i);
+    batteryIndex = getHighestJoltageBatteryIndex(bank, batteryIndex, i);
 
-    batteryIndexes.push(index);
-    index++;
+    batteryIndexes.push(batteryIndex);
+    batteryIndex++;
   }
 
   // get values with indexes
@@ -55,4 +55,4 @@ banks.forEach((bank) => {
   answer = answer + bankJoltage;
 });
 
-console.log("answer= " + answer); // 167526011932478
+console.log("answer = " + answer); // 167526011932478
