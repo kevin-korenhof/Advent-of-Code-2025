@@ -1,5 +1,7 @@
 import { testData, rawData } from "./data.ts";
 
+console.time("Tijdsduur");
+
 const nmrOfBatteries = 12;
 
 let answer = 0;
@@ -56,3 +58,5 @@ banks.forEach((bank) => {
 });
 
 console.log("answer = " + answer); // 167526011932478
+
+console.timeEnd("Tijdsduur");
