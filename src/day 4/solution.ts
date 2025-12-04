@@ -12,7 +12,6 @@ function surroundRolls(data: string[], row: number, position: number) {
       }
     }
   }
-
   return rolls;
 }
 
