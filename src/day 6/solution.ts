@@ -1,13 +1,31 @@
 import { testData, rawData } from "./data.ts";
 
-let firstAnswer = 0;
-
 const data = rawData;
 
 const dataRows = data.split("\n");
 
-// part 1
+function makeCalculations(input: []): Number {
+  let answer = 0;
+  input.forEach((calc) => {
+    const length = calc.length;
+    let calcAnswer = 0;
+    if (calc[length - 1] == "+") {
+      for (let i = 0; i < calc.length - 1; i++) {
+        calcAnswer = calcAnswer + Number(calc[i]);
+      }
+    }
+    if (calc[length - 1] == "*") {
+      calcAnswer = 1;
+      for (let i = 0; i < calc.length - 1; i++) {
+        calcAnswer = calcAnswer * Number(calc[i]);
+      }
+    }
+    answer = answer + calcAnswer;
+  });
+  return answer;
+}
 
+// part 1
 const dataSplitted = dataRows.map((row) => {
   let splitRow = row.split(" ");
   splitRow.forEach((el, i) => {
@@ -15,7 +33,6 @@ const dataSplitted = dataRows.map((row) => {
       splitRow.splice(i, 1);
     }
   });
-
   return splitRow;
 });
 
@@ -29,31 +46,13 @@ for (let i = 0; i < nmrCalcs; i++) {
   }, calculations.push(calculation));
 }
 
-calculations.forEach((calc) => {
-  const length = calc.length;
-  let calcAnswer = 0;
-  if (calc[length - 1] == "+") {
-    for (let i = 0; i < calc.length - 1; i++) {
-      calcAnswer = calcAnswer + Number(calc[i]);
-    }
-  }
-  if (calc[length - 1] == "*") {
-    calcAnswer = 1;
-    for (let i = 0; i < calc.length - 1; i++) {
-      calcAnswer = calcAnswer * Number(calc[i]);
-    }
-  }
-  firstAnswer = firstAnswer + calcAnswer;
-});
-
+const firstAnswer = makeCalculations(calculations); //7098065460541
 console.log(firstAnswer);
 
 // part 2
-
 const rowLength = dataRows[0].length;
 const nmrRows = dataRows.length;
 
-let secondAnswer = 0;
 let calculations2 = [];
 let nmrIndexes = [0];
 
@@ -90,20 +89,6 @@ for (let i = 0; i < amountCalculations; i++) {
   calculations2.push(calculution2);
 }
 
-calculations2.forEach((calc) => {
-  const length = calc.length;
-  let calcAnswer = 0;
-  if (calc[length - 1] == "+") {
-    for (let i = 0; i < calc.length - 1; i++) {
-      calcAnswer = calcAnswer + Number(calc[i]);
-    }
-  }
-  if (calc[length - 1] == "*") {
-    calcAnswer = 1;
-    for (let i = 0; i < calc.length - 1; i++) {
-      calcAnswer = calcAnswer * Number(calc[i]);
-    }
-  }
-  secondAnswer = secondAnswer + calcAnswer;
-});
+const secondAnswer = makeCalculations(calculations2); //13807151830618
+
 console.log(secondAnswer);
