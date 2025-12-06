@@ -1,7 +1,6 @@
 import { testData, rawData } from "./data.ts";
 
 let firstAnswer = 0;
-let secondAnswer = 0;
 
 const data = rawData;
 
@@ -54,6 +53,7 @@ console.log(firstAnswer);
 const rowLength = dataRows[0].length;
 const nmrRows = dataRows.length;
 
+let secondAnswer = 0;
 let calculations2 = [];
 let nmrIndexes = [0];
 
