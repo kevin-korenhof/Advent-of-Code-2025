@@ -1,8 +1,3 @@
-/**
- * range of id's with fresh ingrediënts
- * Check list of ingrediënts if it is in 1 or more ranges
- */
-
 import { testData, rawData } from "./data.ts";
 
 let answer = 0;
@@ -27,7 +22,6 @@ const ingrediënts = rawData
     const number = Number(ingredient);
     return number;
   });
-// optional: sort on min value
 
 const rangesSorted = ranges?.sort((a, b) => a.min - b.min);
 
@@ -46,12 +40,6 @@ ingrediënts?.forEach((ingredient) => {
 });
 
 console.log("Number of fresh ingrediënts: " + answer);
-
-/**
- * part 2:
- * Only consider the fres ranges:
- * How many ingredient's are within those ranges to be fres?
- */
 
 let secondAnswer = 0;
 
