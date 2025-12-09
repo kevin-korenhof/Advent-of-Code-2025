@@ -75,6 +75,10 @@ dataRows.forEach((row, i) => {
 xPaths.sort((a, b) => a.y - b.y);
 yPaths.sort((a, b) => a.x - b.x);
 
+// Create new array for y rows with each change defined by the paths within x
+// If new 'path' from yPaths includes part of previous, change true/false whatever in that part.
+// Create arrays in this new array with ranges that are ok.
+
 dataRows.forEach((firstTile, i) => {
   const tile1 = firstTile.split(",");
   const x1 = Number(tile1[0]);
