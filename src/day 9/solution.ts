@@ -86,54 +86,143 @@ xPaths.forEach((path, i) => {
   let start = path.start;
   let eind = path.eind;
 
-  let addNewRange = true;
-
   if (i == 0) {
     const ranges = [{ start: start, eind: eind }];
     coveredTiles.push({ y, ranges });
   } else {
     const previousRanges = [...coveredTiles[i - 1].ranges];
+
     let ranges = [];
-    previousRanges.forEach((range) => {
-      if (start <= eind) {
-        // no overlap with new range
-        if (range.start > eind || range.eind < start) {
-          ranges.push(range);
-        } else {
-          // overlap with start of new range.
-          if (range.start < start && range.eind >= start) {
-            ranges.push({ start: range.start, eind: start - 1 });
+
+    for (let k = 0; k < previousRanges.length; k++) {
+      const range = previousRanges[k];
+
+      // nieuw volledig voor begin
+      if (eind < range.start - 1) {
+        ranges.push(range);
+      }
+
+      // sluit aan op begin oud
+      if (eind == range.start - 1) {
+        eind = range.eind;
+      }
+
+      // Eind nieuw voorbij start oud
+      if (eind >= range.start) {
+        // start nog voor begin
+        if (start < range.start) {
+          // eind halverwege
+          if (eind < range.eind) {
+            ranges.push({ start: eind + 1, eind: range.eind });
+            eind = range.start - 1;
+          }
+          // eind exact op eind
+          if (eind == range.eind) {
+            eind = range.start - 1;
+          }
+          // eind voorbij eind
+          if (eind > range.eind) {
+            ranges.push({ start: start, eind: range.start - 1 });
+            start = ranges.eind + 1;
+          }
+        }
+
+        // start is gelijk met begin
+        if (start == range.start) {
+          // eind halverwege
+          if (eind < range.eind) {
+            start = eind;
+            eind = range.eind;
+          }
+
+          // eind exact op eind
+          if (eind == range.eind) {
+            start = 0;
+            eind = -1;
+          }
+
+          // eind voorbij eind
+          if (eind > range.eind) {
+            start = range.eind;
+          }
+        }
+
+        // start na begin
+        if (start > range.start) {
+          // start is voor het einde
+          if (start < range.eind) {
+            // eind halverwege/op eind
+            if (eind <= range.eind) {
+              ranges.push({ start: range.start, eind: start });
+              start = 0;
+              eind = -1;
+            }
+            // eind voorbij eind
+            if (eind > range.eind) {
+              ranges.push({ start: range.start, eind: start });
+              start = range.eind + 1;
+            }
+          }
+          // start op het einde
+          if (start == range.eind) {
+            ranges.push({ start: range.start, eind: start });
             start = range.eind + 1;
           } else {
-            if (range.start <= eind && range.eind >= eind) {
-              ranges.push({ start: eind + 1, eind: range.eind });
-              eind = range.start - 1;
-            } else {
-              // full overlap, create 2 new ranges and don't add the 'new' range
-              if (range.start <= start && range.eind >= eind) {
-                ranges.push({ start: range.start, eind: start - 1 });
-                ranges.push({ start: eind + 1, eind: range.eind });
+            // start aansluiteind op einde
+            if (start == range.eind + 1)
+              ranges.push({ start: range.start, eind: eind });
 
-                addNewRange = false;
-              } else {
-                if (range.start >= start && range.eind <= eind) {
-                  ranges.push({ start: start, eind: range.start - 1 });
-                  ranges.push({ start: range.eind + 1, eind: eind });
-                }
-              }
+            // start na einde
+            if (start > range.eind + 1) {
+              ranges.push(range);
+              //all good, nothing happens
             }
           }
         }
-      } else {
-        ranges.push(range);
       }
-    });
+    }
 
-    if (addNewRange && start <= eind) {
-      ranges.push({ start: start, eind: eind });
+    if (eind >= start) {
+      ranges.push({ start, eind });
     }
 
     ranges.sort((a, b) => a.start - b.start);
+
+    // ranges.push({start: , eind: })
+    // previousRanges.forEach((range) => {
+    //   if (start <= eind) {
+    //     // no overlap with new range
+    //     if (range.start > eind || range.eind < start) {
+    //       ranges.push(range);
+    //     } else {
+    //       // overlap with start of new range.
+    //       if (range.start < start && range.eind >= start) {
+    //         ranges.push({ start: range.start, eind: start - 1 });
+    //         start = range.eind + 1;
+    //       } else {
+    //         if (range.start <= eind && range.eind >= eind) {
+    //           ranges.push({ start: eind + 1, eind: range.eind });
+    //           eind = range.start - 1;
+    //         } else {
+    //           // full overlap, create 2 new ranges and don't add the 'new' range
+    //           if (range.start <= start && range.eind >= eind) {
+    //             ranges.push({ start: range.start, eind: start - 1 });
+    //             ranges.push({ start: eind + 1, eind: range.eind });
+
+    //             addNewRange = false;
+    //           } else {
+    //             if (range.start >= start && range.eind <= eind) {
+    //               ranges.push({ start: start, eind: range.start - 1 });
+    //               ranges.push({ start: range.eind + 1, eind: eind });
+    //             }
+    //           }
+    //         }
+    //       }
+    //     }
+    //   } else {
+    //     ranges.push(range);
+    //   }
+    // });
 
     coveredTiles.push({ y, ranges });
   }
@@ -164,7 +253,7 @@ dataRows.forEach((firstTile, k) => {
       if (coveredTiles[l].y < ymin) {
         indexCheckMin = l;
       }
-      if (coveredTiles[l].y > ymax) {
+      if (coveredTiles[l].y >= ymax) {
         indexCheckMax = l;
         break;
       }
@@ -199,6 +288,15 @@ dataRows.forEach((firstTile, k) => {
   }
 });
 
+coveredTiles.forEach((row, i) => {
+  if (i != 0) {
+    if (coveredTiles[i].start == coveredTiles[i - 1].start) {
+      console.log("fuck");
+    }
+  }
+});
+
 console.log("secondAnswer: " + maxSurface); //917796 to low
 
 // 3320172416 wrong
+// 9380343 wrong
