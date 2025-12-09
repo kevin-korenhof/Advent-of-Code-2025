@@ -1,6 +1,6 @@
-import { JSDocParsingMode } from "typescript";
 import { testData, rawData } from "./data.ts";
 console.time("Tijdsduur");
+
 const data = rawData;
 
 const dataRows = data.split("\n");
@@ -16,14 +16,6 @@ type circuitOption = {
   circuit2: number;
   distance: number;
 };
-
-/**
- * Bunch of coördinates from junction boxes
- * Each box will connect to closest box.
- * When connected, boxes will form a circuit of junctions.
- * Get the 3 circuits with the most junctions in it.
- * Multiply the ammount of junctions in those 3 circuits for the answer.
- */
 
 function extractCoordinates(boxData: string): boxCoodinates {
   const data = boxData.split(",");
