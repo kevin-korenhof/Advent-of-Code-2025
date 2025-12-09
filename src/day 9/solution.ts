@@ -79,6 +79,23 @@ yPaths.sort((a, b) => a.x - b.x);
 // If new 'path' from yPaths includes part of previous, change true/false whatever in that part.
 // Create arrays in this new array with ranges that are ok.
 
+let coveredTiles = [];
+
+xPaths.forEach((path, i) => {
+  const y = path.y;
+  const start = path.start;
+  const eind = path.eind;
+
+  if (i == 0) {
+    const ranges = [{ start: start, eind: eind }];
+    coveredTiles.push({ y, ranges });
+  } else {
+    let ranges = [...coveredTiles[i - 1].ranges];
+    ranges.forEach((range) => {});
+  }
+});
+
+// Check if all values are covered
 dataRows.forEach((firstTile, i) => {
   const tile1 = firstTile.split(",");
   const x1 = Number(tile1[0]);
