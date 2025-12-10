@@ -1,3 +1,4 @@
+import { createPrinter } from "typescript";
 import { testData, rawData } from "./data.ts";
 console.time("Tijdsduur");
 
@@ -39,6 +40,7 @@ console.log("firstAnswer: " + maxSurface);
  */
 
 // find out max size of full grid, make array of array's to represent this grid.
+
 let yPaths = [];
 let xPaths = [];
 
@@ -75,10 +77,6 @@ dataRows.forEach((row, i) => {
 xPaths.sort((a, b) => a.y - b.y);
 yPaths.sort((a, b) => a.x - b.x);
 
-// Create new array for y rows with each change defined by the paths within x
-// If new 'path' from yPaths includes part of previous, change true/false whatever in that part.
-// Create arrays in this new array with ranges that are ok.
-
 let coveredTiles = [];
 
 xPaths.forEach((path, i) => {
@@ -90,92 +88,67 @@ xPaths.forEach((path, i) => {
     const ranges = [{ start: start, eind: eind }];
     coveredTiles.push({ y, ranges });
   } else {
-    const previousRanges = [...coveredTiles[i - 1].ranges];
-
     let ranges = [];
+    let nextRanges = [];
+    let rangeDiff = false;
+
+    const previousRanges = coveredTiles[coveredTiles.length - 1].ranges;
 
     for (let k = 0; k < previousRanges.length; k++) {
       const range = previousRanges[k];
-
-      // nieuw volledig voor begin
-      if (eind < range.start - 1) {
+      if (eind < range.start || start > range.eind) {
+        // aparte ranges, beide bestaan vanaf y
         ranges.push(range);
-      }
-
-      // sluit aan op begin oud
-      if (eind == range.start - 1) {
-        eind = range.eind;
-      }
-
-      // Eind nieuw voorbij start oud
-      if (eind >= range.start) {
-        // start nog voor begin
-        if (start < range.start) {
-          // eind halverwege
-          if (eind < range.eind) {
-            ranges.push({ start: eind + 1, eind: range.eind });
-            eind = range.start - 1;
-          }
-          // eind exact op eind
-          if (eind == range.eind) {
-            eind = range.start - 1;
-          }
-          // eind voorbij eind
-          if (eind > range.eind) {
-            ranges.push({ start: start, eind: range.start - 1 });
-            start = ranges.eind + 1;
-          }
-        }
-
-        // start is gelijk met begin
-        if (start == range.start) {
-          // eind halverwege
-          if (eind < range.eind) {
-            start = eind;
-            eind = range.eind;
-          }
-
-          // eind exact op eind
-          if (eind == range.eind) {
-            start = 0;
-            eind = -1;
-          }
-
-          // eind voorbij eind
-          if (eind > range.eind) {
-            start = range.eind;
-          }
-        }
-
-        // start na begin
-        if (start > range.start) {
-          // start is voor het einde
-          if (start < range.eind) {
-            // eind halverwege/op eind
-            if (eind <= range.eind) {
-              ranges.push({ start: range.start, eind: start });
-              start = 0;
-              eind = -1;
-            }
-            // eind voorbij eind
-            if (eind > range.eind) {
-              ranges.push({ start: range.start, eind: start });
-              start = range.eind + 1;
-            }
-          }
-          // start op het einde
+        nextRanges.push(range);
+      } else {
+        //
+        if (eind == range.start) {
+          // range sluit aan op begin van huidige
+          eind = range.eind;
+        } else {
           if (start == range.eind) {
-            ranges.push({ start: range.start, eind: start });
-            start = range.eind + 1;
-          } else {
-            // start aansluiteind op einde
-            if (start == range.eind + 1)
-              ranges.push({ start: range.start, eind: eind });
+            // range sluit aan op eind van huidige
+            start = range.start;
 
-            // start na einde
-            if (start > range.eind + 1) {
-              ranges.push(range);
-              //all good, nothing happens
+            //
+          } else {
+            if (start == range.start) {
+              // range begint op zelfde punt als huidige
+              if (eind == range.eind) {
+                // EN eindigt op zelfde punt als huidige
+                ranges.push(range); // doet mee in huidige y, niet in volgende.
+                eind = -1;
+                start = 0;
+                rangeDiff = true;
+              } else {
+                if (eind < range.eind) {
+                  // eindigt eerder dan huidige
+                  ranges.push(range); // doet mee in huidige y, deels in volgende
+                  nextRanges.push({ start: eind, eind: range.eind });
+                  eind = -1;
+                  start = 0;
+                  rangeDiff = true;
+                }
+              }
+            } else {
+              if (eind == range.eind) {
+                // range eindigt op zelfde punt als huidige
+                if (start > range.start) {
+                  // start niet gelijk
+                  ranges.push(range); // doet mee in huidige y, deels in volgende
+                  nextRanges.push({ start: range.start, eind: start });
+                  eind = -1;
+                  start = 0;
+                  rangeDiff = true;
+                } else {
+                  if (start > range.start && eind < range.eind) {
+                    ranges.push(range);
+                    nextRanges.push({ start: range.start, eind: start });
+                    nextRanges.push({ start: eind, eind: range.eind });
+                    console.log("dit");
+                  }
+                }
+              }
             }
           }
         }
@@ -184,9 +157,11 @@ xPaths.forEach((path, i) => {
 
     if (eind >= start) {
       ranges.push({ start, eind });
+      nextRanges.push({ start, eind });
     }
 
     ranges.sort((a, b) => a.start - b.start);
+    nextRanges.sort((a, b) => a.start - b.start);
 
     // ranges.push({start: , eind: })
     // previousRanges.forEach((range) => {
@@ -225,6 +200,9 @@ xPaths.forEach((path, i) => {
     // });
 
     coveredTiles.push({ y, ranges });
+    if (rangeDiff) {
+      coveredTiles.push({ y: y + 1, ranges: nextRanges });
+    }
   }
 });
 
@@ -250,7 +228,7 @@ dataRows.forEach((firstTile, k) => {
     let indexCheckMax;
 
     for (let l = 0; l < coveredTiles.length; l++) {
-      if (coveredTiles[l].y < ymin) {
+      if (coveredTiles[l].y <= ymin) {
         indexCheckMin = l;
       }
       if (coveredTiles[l].y >= ymax) {
@@ -288,15 +266,7 @@ dataRows.forEach((firstTile, k) => {
   }
 });
 
-coveredTiles.forEach((row, i) => {
-  if (i != 0) {
-    if (coveredTiles[i].start == coveredTiles[i - 1].start) {
-      console.log("fuck");
-    }
-  }
-});
+console.log(xPaths);
 
-console.log("secondAnswer: " + maxSurface); //917796 to low
-
-// 3320172416 wrong
-// 9380343 wrong
+console.log("secondAnswer: " + maxSurface);
+// 1473551379 BINGO!!!
