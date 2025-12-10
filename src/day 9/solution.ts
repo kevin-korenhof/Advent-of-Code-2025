@@ -163,42 +163,6 @@ xPaths.forEach((path, i) => {
     ranges.sort((a, b) => a.start - b.start);
     nextRanges.sort((a, b) => a.start - b.start);
 
-    // ranges.push({start: , eind: })
-    // previousRanges.forEach((range) => {
-    //   if (start <= eind) {
-    //     // no overlap with new range
-    //     if (range.start > eind || range.eind < start) {
-    //       ranges.push(range);
-    //     } else {
-    //       // overlap with start of new range.
-    //       if (range.start < start && range.eind >= start) {
-    //         ranges.push({ start: range.start, eind: start - 1 });
-    //         start = range.eind + 1;
-    //       } else {
-    //         if (range.start <= eind && range.eind >= eind) {
-    //           ranges.push({ start: eind + 1, eind: range.eind });
-    //           eind = range.start - 1;
-    //         } else {
-    //           // full overlap, create 2 new ranges and don't add the 'new' range
-    //           if (range.start <= start && range.eind >= eind) {
-    //             ranges.push({ start: range.start, eind: start - 1 });
-    //             ranges.push({ start: eind + 1, eind: range.eind });
-
-    //             addNewRange = false;
-    //           } else {
-    //             if (range.start >= start && range.eind <= eind) {
-    //               ranges.push({ start: start, eind: range.start - 1 });
-    //               ranges.push({ start: range.eind + 1, eind: eind });
-    //             }
-    //           }
-    //         }
-    //       }
-    //     }
-    //   } else {
-    //     ranges.push(range);
-    //   }
-    // });
-
     coveredTiles.push({ y, ranges });
     if (rangeDiff) {
       coveredTiles.push({ y: y + 1, ranges: nextRanges });
@@ -270,3 +234,4 @@ console.log(xPaths);
 
 console.log("secondAnswer: " + maxSurface);
 // 1473551379 BINGO!!!
+console.timeEnd("Tijdsduur");
