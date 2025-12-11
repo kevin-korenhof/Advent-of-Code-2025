@@ -130,42 +130,10 @@ dataRows.forEach((row) => {
         // press button
         let pressedButton =
           buttons[buttons.findIndex((btns) => btns.index == button)];
+        let lowerBtns = [];
+
         pressedButton.affectedLvls.forEach((lvl) => {
-          const dataStateJoltage4 = structuredClone(joltage);
-          const dataStateButtons4 = structuredClone(buttons);
-
           lvl[0].value--; // this lowers the joltage lvl everywhere by 1 for all parts where joltage is registered
-
-          // lower max for each button that is with this lvl
-          lvl[0].connectedButtons.forEach((button) => {
-            let btn = buttons.filter((buttons) => buttons.index == button);
-            btn = btn[0];
-
-            console.log("a:" + a);
-
-            if (btn.maxPresses >= 0) {
-            } else {
-              console.log("fuck");
-            }
-
-            btn.maxPresses--;
-
-            // check if maxPresses = 0, if so, remove entry.
-            if (btn.maxPresses == 0) {
-              const buttonIndex = btn.index;
-              buttons.splice(
-                buttons.findIndex((checkBtn) => checkBtn.index == buttonIndex),
-                1
-              );
-
-              joltage.forEach((jolt) => {
-                const joltBtnIndex = jolt.connectedButtons.indexOf(buttonIndex);
-                if (joltBtnIndex != -1) {
-                  jolt.connectedButtons.splice(joltBtnIndex, 1);
-                }
-              });
-            }
-          });
 
           if (lvl[0].value == 0) {
             const index = lvl[0].index;
@@ -180,11 +148,68 @@ dataRows.forEach((row) => {
                 (btn) => btn[0].index == index
               );
               if (affectedIndex != -1) {
-                button.affectedLvls.splice(affectedIndex, 1);
-              }
-              // if button has no more references, remove button:
-              if (button.affectedLvls.length == 0) {
+                button.affectedLvls.forEach((affected) => {
+                  affected = affected[0];
+                  // TODO: change this to remove from joltage in stead of buttons
+                  affected.connectedButtons.splice(affectedIndex, 1);
+                });
+
                 buttons.splice(i, 1);
+              }
+            });
+          } else {
+            // lower max for each button that is with this lvl
+            lvl[0].connectedButtons.forEach((button) => {
+              lowerBtns.push(button);
+            });
+          }
+        });
+
+        console.log(lowerBtns);
+        const uniqueBtns = [...new Set(lowerBtns)];
+        console.log(uniqueBtns);
+
+        uniqueBtns.forEach((button) => {
+          let btn = buttons.filter((buttons) => buttons.index == button);
+          btn = btn[0];
+          let maxBtnPresses = 99999;
+
+          btn.affectedLvls.forEach((lvl) => {
+            if (lvl[0].value < maxBtnPresses) {
+              maxBtnPresses = lvl[0].value;
+            }
+          });
+
+          btn.maxPresses = maxBtnPresses;
+          console.log(button);
+
+          a++;
+
+          console.log("a:" + a);
+
+          if (btn.maxPresses >= 0) {
+          } else {
+            console.log("fuck");
+          }
+          console.log("btn");
+          console.log(btn);
+          console.log("lvls");
+          btn.affectedLvls.forEach((lvl) => {
+            console.log(lvl[0].value);
+          });
+
+          // check if maxPresses = 0, if so, remove entry.
+          if (btn.maxPresses == 0) {
+            const buttonIndex = btn.index;
+            buttons.splice(
+              buttons.findIndex((checkBtn) => checkBtn.index == buttonIndex),
+              1
+            );
+
+            joltage.forEach((jolt) => {
+              const joltBtnIndex = jolt.connectedButtons.indexOf(buttonIndex);
+              if (joltBtnIndex != -1) {
+                jolt.connectedButtons.splice(joltBtnIndex, 1);
               }
             });
           }
@@ -194,26 +219,24 @@ dataRows.forEach((row) => {
           // check if conditions are met:
           if (buttons.length == 0) {
             console.log("failure for this path");
-            buttons = dataStateButtons4;
-            joltage = dataStateJoltage4;
+            buttons = dataStateButtons3;
+            joltage = dataStateJoltage3;
             console.log("return 4");
             return;
           }
-
-          if (n > step) {
-            if (setJoltages(n, step + 1, buttons, joltage)) {
-              return true;
-            }
-          } else {
-            a++;
-            if (joltage.length == 0) {
-              console.log("succes");
-              return true;
-            }
-          }
-          buttons = dataStateButtons4;
-          joltage = dataStateJoltage4;
         });
+
+        if (n > step) {
+          if (setJoltages(n, step + 1, buttons, joltage)) {
+            return true;
+          }
+        } else {
+          if (joltage.length == 0) {
+            console.log("succes");
+            return true;
+          }
+        }
+
         buttons = dataStateButtons3;
         joltage = dataStateJoltage3;
         console.log("return 3");
