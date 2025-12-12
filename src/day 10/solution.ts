@@ -59,6 +59,13 @@ console.log(firstAnswer);
 
 // part 2
 
+/**
+ * Ok, this now works on the testdata set! So the concept is ok.
+ * Problem with the actual input is that it needs to run through to many options... It can easily have a minimum of 300+ presses.
+ * Look for a sollution to minimize the steps that are taken. Group the number of presses together.
+ * This is already set up if there is only 1 button left, but needs to be expanded for 2 or more buttons.
+ */
+
 let secondAnswer = 0;
 
 // dataRows.forEach((row) => {
