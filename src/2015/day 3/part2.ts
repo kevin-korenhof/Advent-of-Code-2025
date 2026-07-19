@@ -15,12 +15,11 @@ let position = {
   },
 };
 
+type Instructions = '^' | '<' | '>' | 'v';
+
 let housesVisited: { x: number; y: number }[] = [{ x: 0, y: 0 }];
 
-function moveHouse(
-  person: 'santa' | 'robot',
-  instruction: '^' | '<' | '>' | 'v',
-) {
+function moveHouse(person: 'santa' | 'robot', instruction: Instructions) {
   if (instruction === '^') {
     position[person].y += 1;
   }
@@ -48,7 +47,7 @@ function moveHouse(
 }
 
 for (let i = 0; i < amountPresents; i++) {
-  moveHouse(i % 2 === 1 ? 'santa' : 'robot', rawData.charAt(i));
+  moveHouse(i % 2 === 1 ? 'santa' : 'robot', rawData.charAt(i) as Instructions);
 }
 
 console.log(housesVisited.length);
