@@ -1,48 +1,59 @@
-import { testData, rawData } from "./data.ts";
+import { testData, rawData } from './data.ts';
 
 const data = rawData;
 
-const dataRows = data.split("\n");
+const dataRows = data.split('\n');
 
-function makeCalculations(input: []): Number {
+function makeCalculations(input: string[][]): Number {
   let answer = 0;
+
   input.forEach((calc) => {
     const length = calc.length;
     let calcAnswer = 0;
-    if (calc[length - 1] == "+") {
+
+    if (calc[length - 1] == '+') {
       for (let i = 0; i < calc.length - 1; i++) {
         calcAnswer = calcAnswer + Number(calc[i]);
       }
     }
-    if (calc[length - 1] == "*") {
+
+    if (calc[length - 1] == '*') {
       calcAnswer = 1;
+
       for (let i = 0; i < calc.length - 1; i++) {
         calcAnswer = calcAnswer * Number(calc[i]);
       }
     }
+
     answer = answer + calcAnswer;
   });
+
   return answer;
 }
 
 // part 1
 const dataSplitted = dataRows.map((row) => {
-  let splitRow = row.split(" ");
+  let splitRow = row.split(' ');
+
   splitRow.forEach((el, i) => {
-    while (splitRow[i] == "") {
+    while (splitRow[i] == '') {
       splitRow.splice(i, 1);
     }
   });
+
   return splitRow;
 });
 
 // extract all numbers per problem
-const nmrCalcs = dataSplitted[0].length;
-let calculations = [];
+const nmrCalcs = dataSplitted[0]!.length;
+
+let calculations: string[][] = [];
+
 for (let i = 0; i < nmrCalcs; i++) {
-  let calculation = [];
+  let calculation: string[] = [];
+
   dataSplitted.forEach((row) => {
-    calculation.push(row[i]);
+    calculation.push(row[i]!);
   }, calculations.push(calculation));
 }
 
@@ -50,7 +61,7 @@ const firstAnswer = makeCalculations(calculations); //7098065460541
 console.log(firstAnswer);
 
 // part 2
-const rowLength = dataRows[0].length;
+const rowLength = dataRows[0]!.length;
 const nmrRows = dataRows.length;
 
 let calculations2 = [];
@@ -59,12 +70,14 @@ let nmrIndexes = [0];
 for (let i = 0; i < rowLength; ) {
   const nmrStart = i;
   let nextNumber = i + 1;
+
   while (
-    dataRows[nmrRows - 1][nextNumber] == " " ||
-    (dataRows[nmrRows - 1][nextNumber] == undefined && nextNumber < rowLength)
+    dataRows[nmrRows - 1]![nextNumber] == ' ' ||
+    (dataRows[nmrRows - 1]![nextNumber] == undefined && nextNumber < rowLength)
   ) {
     nextNumber++;
   }
+
   nmrIndexes.push(nextNumber);
   i = nextNumber;
 }
@@ -72,20 +85,24 @@ for (let i = 0; i < rowLength; ) {
 const amountCalculations = nmrIndexes.length - 1;
 
 for (let i = 0; i < amountCalculations; i++) {
-  let calculution2 = [];
+  let calculution2: string[] = [];
+
   const nmrStartIndex = nmrIndexes[i] as number;
   const nmrEndIndex =
-    i != amountCalculations - 1 ? nmrIndexes[i + 1] - 2 : nmrIndexes[i + 1] - 1;
+    i != amountCalculations - 1
+      ? nmrIndexes[i + 1]! - 2
+      : nmrIndexes[i + 1]! - 1;
 
   for (let j = nmrStartIndex; j <= nmrEndIndex; j++) {
-    let nmr = "";
+    let nmr = '';
     for (let k = 0; k < nmrRows - 1; k++) {
-      const addNumber = dataRows[k][j];
+      const addNumber = dataRows[k]![j];
       nmr = nmr + addNumber;
     }
     calculution2.push(nmr);
   }
-  calculution2.push(dataRows[nmrRows - 1][nmrStartIndex]);
+
+  calculution2.push(dataRows[nmrRows - 1]![nmrStartIndex]!);
   calculations2.push(calculution2);
 }
 

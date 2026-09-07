@@ -1,8 +1,8 @@
-import data from "./data.ts";
+import data from './data.ts';
 
-type data = {
+type Data = {
   netTurns: number;
-  direction: string;
+  direction: 'R' | 'L';
   fullRotations: number;
 };
 
@@ -13,15 +13,16 @@ let currentValue = dialStart;
 let timesZero = 0;
 
 // helper functions
-function parseData(data: string): data[] {
-  const splitData: data[] = data.split("\n").map((dataPoint) => {
+function parseData(data: string): Data[] {
+  const splitData: Data[] = data.split('\n').map((dataPoint) => {
     const turns = Number(dataPoint.slice(1));
     const direction = dataPoint.slice(0, 1);
     const fullRotations = Math.floor(turns / 100);
     const netTurns = turns - fullRotations * 100;
 
-    return { netTurns, fullRotations, direction };
+    return { netTurns, fullRotations, direction } as Data;
   });
+
   return splitData;
 }
 
@@ -30,7 +31,7 @@ parseData(input).forEach(({ netTurns, direction, fullRotations }) => {
   const startValue = currentValue;
 
   // set 'direction' for the turns
-  const turns = direction == "L" ? netTurns * -1 : netTurns;
+  const turns = direction == 'L' ? netTurns * -1 : netTurns;
 
   // add full rotations to timesZero
   timesZero = timesZero + fullRotations;

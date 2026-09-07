@@ -1,19 +1,23 @@
-import { testData, rawData } from "./data.ts";
+import { testData, rawData } from './data.ts';
 
-console.time("Tijdsduur");
+console.time('Tijdsduur');
 
 const nmrOfBatteries = 12;
 
 let answer = 0;
 
+// Separate data into banks.
+const banks = rawData.split('\n');
+
 function getHighestJoltageBatteryIndex(
   bank: string,
   startIndex: number = 0,
-  batteryNumber: number
+  batteryNumber: number,
 ) {
   const bankLength = bank.length;
   let joltage = 0;
   let batteryIndex = startIndex;
+
   for (
     let i = startIndex;
     i <= bankLength - nmrOfBatteries + batteryNumber;
@@ -29,9 +33,6 @@ function getHighestJoltageBatteryIndex(
   }
   return batteryIndex;
 }
-
-// Separate data into banks.
-const banks = rawData.split("\n");
 
 banks.forEach((bank) => {
   let batteryIndexes: number[] = [];
@@ -51,12 +52,12 @@ banks.forEach((bank) => {
   });
 
   // stick values together
-  const bankJoltage = Number(joltageValues.join(""));
+  const bankJoltage = Number(joltageValues.join(''));
 
   // add to answer
   answer = answer + bankJoltage;
 });
 
-console.log("answer = " + answer); // 167526011932478
+console.log('answer = ' + answer); // 167526011932478
 
-console.timeEnd("Tijdsduur");
+console.timeEnd('Tijdsduur');
